@@ -1,8 +1,9 @@
 import { getCurrentWeather } from '../../services/weatherNow';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useEffect, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Weather, WeatherData } from '@/models/weatherData';
+import { weatherIcons } from '@/constants/icons';
 
 
 // Mock data for the hourly forecast
@@ -62,7 +63,10 @@ export default function TabOneScreen() {
             {currentWeather!.temp}°C
           </Text>
           <Text style={styles.conditionText}>{currentWeather!.description}</Text>
-          <Text style={styles.weatherIcon}>{currentWeather!.icon}</Text>
+          <Image
+            source={weatherIcons[currentWeather!.icon]}
+            style={styles.weatherIcon}
+          />
         </View>
 
         {/* Hourly Forecast Section */}
