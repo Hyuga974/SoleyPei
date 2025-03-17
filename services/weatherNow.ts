@@ -1,16 +1,6 @@
+import { WeatherData } from "@/models/weatherData";
 import Constants from "expo-constants";
 
-interface WeatherData {
-  name: string;
-  main: {
-    temp: number; // unity Kelvin
-    humidity: number; 
-  };
-  weather: {
-    description: string; 
-    icon: string; 
-  }[];
-}
 
 
 export async function getCurrentWeather(city: string): Promise<WeatherData | null> {
