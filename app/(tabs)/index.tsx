@@ -7,16 +7,6 @@ import { weatherIcons } from '@/constants/icons';
 
 
 // Mock data for the hourly forecast
-const hourlyForecast = [
-  { time: '12:00', temp: 25, icon: '☀️' },
-  { time: '13:00', temp: 26, icon: '☀️' },
-  { time: '14:00', temp: 27, icon: '⛅' },
-  { time: '15:00', temp: 26, icon: '⛅' },
-  { time: '16:00', temp: 25, icon: '🌧️' },
-  { time: '17:00', temp: 24, icon: '🌧️' },
-  { time: '18:00', temp: 23, icon: '🌧️' },
-  { time: '19:00', temp: 22, icon: '🌙' },
-];
 
 const defaultCurrentWeather = {
   city: 'Saint-Denis, RE',
@@ -27,7 +17,18 @@ const defaultCurrentWeather = {
 };
 export default function TabOneScreen() {
   const [currentWeather, setCurrentWeather] = useState<Weather | null>(defaultCurrentWeather);
-  const [hourlyForecast, setHourlyForecast] = useState<{ time: string; temp: number; icon: string }[]>([]);
+  const [hourlyForecast, setHourlyForecast] = useState<{ time: string; temp: number; icon: string }[]>
+  ([
+    { time: '12:00', temp: 25, icon: '01d' },
+    { time: '13:00', temp: 26, icon: '02d' },
+    { time: '14:00', temp: 27, icon: '03d' },
+    { time: '15:00', temp: 26, icon: '04d' },
+    { time: '16:00', temp: 25, icon: '09d' },
+    { time: '17:00', temp: 24, icon: '10d' },
+    { time: '18:00', temp: 23, icon: '11d' },
+    { time: '19:00', temp: 22, icon: '13d' },
+    { time: '20:00', temp: 22, icon: '50d' },
+  ]);
   useEffect(() => {
     const fetchWeather = async () => {
       const city = "Saint-Denis, RE";
@@ -72,19 +73,26 @@ export default function TabOneScreen() {
         {/* Hourly Forecast Section */}
         <View style={styles.hourlyForecastContainer}>
           <Text style={styles.sectionTitle}>Hourly Forecast</Text>
-          <ScrollView horizontal>
-            {hourlyForecast.map((hour, index) => (
-              console.log("Hourly ----->", hour),
-              <View key={index} style={styles.hourlyItem}>
-                <Text style={styles.hourlyTime}>{hour.time}</Text>
-                <Image 
-                  style={styles.hourlyIcon} 
-                  source={weatherIcons[hour.icon]}/>
-                <Text style={styles.hourlyTemperature}>
-                  {hour.temp}°C
-                </Text>
-              </View>
-            ))}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {hourlyForecast.length > 0 ? (
+              hourlyForecast.map((hour, index) => {
+                console.log("Hourly Forecast Item:", hour); // Debugging: Log each hourly forecast item
+                return (
+                  <View key={index} style={styles.hourlyItem}>
+                    <Text style={styles.hourlyTime}>{hour.time}</Text>
+                    <Image
+                      source={weatherIcons[hour.icon] || weatherIcons['01d']} // Fallback icon if icon is missing
+                      style={styles.hourlyIcon}
+                    />
+                    <Text style={styles.hourlyTemperature}>
+                      {Math.round(hour.temp)}°C {/* Round temperature for better readability */}
+                    </Text>
+                  </View>
+                );
+              })
+            ) : (
+              <Text>No forecast data available.</Text> // Fallback if no data
+            )}
           </ScrollView>
         </View>
       </ScrollView>
@@ -146,6 +154,10 @@ const styles = StyleSheet.create({
   hourlyIcon: {
     fontSize: 30,
     marginVertical: 5,
+    height : 100,
+    width : 100,
+    maxWidth: 100,
+    maxHeight: 100,
   },
   hourlyTemperature: {
     fontSize: 18,
