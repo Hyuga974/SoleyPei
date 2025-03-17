@@ -30,11 +30,11 @@ export default function TabOneScreen() {
   const [hourlyForecast, setHourlyForecast] = useState<{ time: string; temp: number; icon: string }[]>([]);
   useEffect(() => {
     const fetchWeather = async () => {
-      const city = "Saint-Denis,RE";
+      const city = "Saint-Denis, RE";
       const weatherData = await getCurrentWeather(city);
   
       if (weatherData) {
-        console.log("Weather Data:", weatherData);
+        // console.log("Weather Data:", weatherData);
         setCurrentWeather({
           city: weatherData.name,
           temp: parseFloat((weatherData.main.temp - 273.15).toFixed(2)),
@@ -42,9 +42,9 @@ export default function TabOneScreen() {
           description: weatherData.weather[0].description,
           icon: weatherData.weather[0].icon,
         });
-        console.log("Weather Data:", currentWeather);
+        //console.log("Weather Data:", currentWeather);
       } else {
-        console.log("Failed to fetch weather data.");
+        //console.log("Failed to fetch weather data.");
       }
     };
   
@@ -52,7 +52,7 @@ export default function TabOneScreen() {
   }, []);
   return (
     <LinearGradient
-      colors={['#4c669f', '#3b5998', '#192f6a']}
+      colors={currentWeather?.icon.includes("d")?['#4c669f', '#3b5998', '#192f6a']:['#907bb4', '#0f056b', '#0d0217']}
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -72,11 +72,14 @@ export default function TabOneScreen() {
         {/* Hourly Forecast Section */}
         <View style={styles.hourlyForecastContainer}>
           <Text style={styles.sectionTitle}>Hourly Forecast</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <ScrollView horizontal>
             {hourlyForecast.map((hour, index) => (
+              console.log("Hourly ----->", hour),
               <View key={index} style={styles.hourlyItem}>
                 <Text style={styles.hourlyTime}>{hour.time}</Text>
-                <Text style={styles.hourlyIcon}>{hour.icon}</Text>
+                <Image 
+                  style={styles.hourlyIcon} 
+                  source={weatherIcons[hour.icon]}/>
                 <Text style={styles.hourlyTemperature}>
                   {hour.temp}°C
                 </Text>
@@ -119,9 +122,12 @@ const styles = StyleSheet.create({
   weatherIcon: {
     fontSize: 60,
     marginTop: 10,
+    height : 300,
+    width : 300,
   },
   hourlyForecastContainer: {
     marginTop: 20,
+    color: 'red',
   },
   sectionTitle: {
     fontSize: 24,
