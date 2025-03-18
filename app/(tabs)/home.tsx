@@ -45,10 +45,8 @@ export default function HomeSceen() {
         }
 
         const hourlyForecastData = await getForecast(cityName);
-        console.log("Hourly Forecast Data:", hourlyForecastData);
 
         hourlyForecastData ? setHourlyForecast(hourlyForecastData) : setHourlyForecast([]);
-        hourlyForecast && console.log("Hourly length Data:", hourlyForecast.length);
       } else {
         console.log("Failed to fetch city data.");
       }
@@ -56,10 +54,6 @@ export default function HomeSceen() {
 
     fetchWeather();
   }, [location]);
-
-  useEffect(() => {
-    console.log("Hourly Forecast Updated:", hourlyForecast);
-  }, [hourlyForecast]);
 
   useEffect(() => {
     async function getCurrentLocation() {
