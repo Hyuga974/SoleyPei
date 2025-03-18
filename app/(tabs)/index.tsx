@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Weather, WeatherData } from '@/models/weatherData';
 import { weatherIcons } from '@/constants/icons';
+import * as Location from 'expo-location';
 
 
 // Mock data for the hourly forecast
@@ -29,6 +30,10 @@ export default function TabOneScreen() {
     { time: '19:00', temp: 22, icon: '13d' },
     { time: '20:00', temp: 22, icon: '50d' },
   ]);
+
+  const [location, setLocation] = useState<Location.LocationObject | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
   useEffect(() => {
     const fetchWeather = async () => {
       const city = "Saint-Denis, RE";
@@ -51,6 +56,23 @@ export default function TabOneScreen() {
   
     fetchWeather();
   }, []);
+  useEffect(() => {
+    async function getCurrentLocation() {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+  
+      let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.High});
+      console.log("Location before set:", location);
+      setLocation(location);
+    }
+
+    getCurrentLocation();
+    console.log("Location:", JSON.stringify(location));
+  }, []);
+
   return (
     <LinearGradient
       colors={currentWeather?.icon.includes("d")?['#4c669f', '#3b5998', '#192f6a']:['#907bb4', '#0f056b', '#0d0217']}
