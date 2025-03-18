@@ -19,7 +19,7 @@ const defaultCurrentWeather = {
   icon: '☀️',
 };
 
-export default function TabOneScreen() {
+export default function HomeSceen() {
   const [currentWeather, setCurrentWeather] = useState<Weather | null>(defaultCurrentWeather);
   const [hourlyForecast, setHourlyForecast] = useState<ForecastData[] | null>(null);
   const [location, setLocation] = useState<Coord | null>(null);
