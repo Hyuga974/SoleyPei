@@ -5,6 +5,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Weather, WeatherData } from '@/models/weatherData';
 import { weatherIcons } from '@/constants/icons';
 import * as Location from 'expo-location';
+import { Coord, LocationData } from '@/models/coodrinate';
+import { getCity } from '@/services/location';
 
 
 // Mock data for the hourly forecast
@@ -31,31 +33,35 @@ export default function TabOneScreen() {
     { time: '20:00', temp: 22, icon: '50d' },
   ]);
 
-  const [location, setLocation] = useState<Location.LocationObject | null>(null);
+  const [location, setLocation] = useState<Coord | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchWeather = async () => {
-      const city = "Saint-Denis, RE";
-      const weatherData = await getCurrentWeather(city);
-  
-      if (weatherData) {
-        // console.log("Weather Data:", weatherData);
-        setCurrentWeather({
-          city: weatherData.name,
-          temp: parseFloat((weatherData.main.temp - 273.15).toFixed(2)),
-          humidity: weatherData.main.humidity,
-          description: weatherData.weather[0].description,
-          icon: weatherData.weather[0].icon,
-        });
-        //console.log("Weather Data:", currentWeather);
+      //const city = "Saint-Denis, RE";
+      const city: LocationData | null = await getCity(location!);
+      console.log("City:", city);
+      if (city) {
+        const cityData = JSON.parse(JSON.stringify(city));
+        const cityName = cityData[0].local_names.fr+", "+cityData[0].country;
+        console.log("City Name:", cityName);
+        const weatherData = await getCurrentWeather(cityName);
+        if (weatherData) {
+          setCurrentWeather({
+            city: weatherData.name,
+            temp: parseFloat((weatherData.main.temp - 273.15).toFixed(2)),
+            humidity: weatherData.main.humidity,
+            description: weatherData.weather[0].description,
+            icon: weatherData.weather[0].icon,
+          });
+        }
       } else {
-        //console.log("Failed to fetch weather data.");
+        console.log("Failed to fetch city data.");
       }
     };
   
     fetchWeather();
-  }, []);
+  }, [location]);
   useEffect(() => {
     async function getCurrentLocation() {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -64,9 +70,16 @@ export default function TabOneScreen() {
         return;
       }
   
-      let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.High});
-      console.log("Location before set:", location);
-      setLocation(location);
+      let locationData = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.High});
+      console.log("Location before edit:", locationData);
+
+      let newLocation = {
+        latitude: locationData.coords.latitude,
+        longitude: locationData.coords.longitude,
+      };
+      console.log("Location after edit:", newLocation);
+
+      setLocation(newLocation);
     }
 
     getCurrentLocation();
@@ -98,7 +111,6 @@ export default function TabOneScreen() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {hourlyForecast.length > 0 ? (
               hourlyForecast.map((hour, index) => {
-                console.log("Hourly Forecast Item:", hour); // Debugging: Log each hourly forecast item
                 return (
                   <View key={index} style={styles.hourlyItem}>
                     <Text style={styles.hourlyTime}>{hour.time}</Text>
