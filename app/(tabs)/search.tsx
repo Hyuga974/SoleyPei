@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, TextInput, StyleSheet, Animated, Easing } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Animated, Easing } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons'; // For the search icon
 import { getCities } from '@/services/location';
+import CityCard from '@/components/CityCard';
+import CityList from '@/components/CityCard';
 
 export default function SearchBar() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -50,7 +52,7 @@ export default function SearchBar() {
     <View style={styles.container}>
       <Animated.View style={[styles.searchBarContainer, { width: animatedWidth }]}>
         <LinearGradient
-          colors={isFocused ? ['#6a11cb', '#2575fc'] : ['#f0f0f0', '#e0e0e0']} // Gradient colors
+          colors={isFocused ? ['#907bb4', '#0d0217'] : ['#f0f0f0', '#e0e0e0']} // Gradient colors
           style={styles.gradientBackground}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
@@ -67,6 +69,13 @@ export default function SearchBar() {
             returnKeyType="search"
             onSubmitEditing={search}
           />
+          {searchResults && searchResults.length > 0 ? (
+            <View>
+              <CityList {...searchResults} />
+            </View>
+          ) : (
+            <Text>No cities data found.</Text>
+          )}
         </LinearGradient>
       </Animated.View>
     </View>
