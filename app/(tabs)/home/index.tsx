@@ -1,4 +1,4 @@
-import { getCurrentWeather } from '../../services/weatherNow';
+import { getCurrentWeather } from '../../../services/weatherNow';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useEffect, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
