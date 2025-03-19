@@ -1,3 +1,5 @@
+import { Weather } from "./weatherData";
+
 export interface CoordData {
     coords:{
         accuracy: number;
@@ -38,4 +40,8 @@ export interface LocationInfo {
     lon: number;
     country: string;
     state: string;
+}
+
+export interface LocationWithWeather extends LocationInfo {
+    currentWeather: Weather | null;
 }
