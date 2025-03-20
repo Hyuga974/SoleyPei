@@ -99,7 +99,7 @@ export default function HomeSceen() {
 
         {/* Hourly Forecast Section */}
         <View style={styles.hourlyForecastContainer}>
-          <Text style={styles.sectionTitle}>Hourly Forecast</Text>
+          <Text style={styles.sectionTitle}>Forecast</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {hourlyForecast && hourlyForecast.length > 0 ? (
               hourlyForecast.map((hour, index) => {

@@ -6,9 +6,10 @@ import { weatherIcons } from '@/constants/icons';
 import * as Location from 'expo-location';
 import { Coord, LocationData } from '@/models/coodrinate';
 import { getCity } from '@/services/location';
-import { getForecast } from '@/services/weatherForecast';
+import { getForecast, getForecastFromCoord } from '@/services/weatherForecast';
 import { getCurrentWeather, getCurrentWeatherFromCoord } from '@/services/weatherNow';
 import { useLocalSearchParams } from 'expo-router';
+import { format, parse } from 'date-fns';
 
 export default function CitySceen() {
     
@@ -55,7 +56,7 @@ export default function CitySceen() {
                     icon: weatherData.weather[0].icon,
                 }); 
             }
-            const hourlyForecastData = await getForecast(cityName!);
+            const hourlyForecastData = await getForecastFromCoord(coodrinate);
             hourlyForecastData ? setHourlyForecast(hourlyForecastData) : setHourlyForecast([]);
         }
         fetchWeather();
@@ -80,16 +81,38 @@ export default function CitySceen() {
               </>      
             ):(
               <View style={styles.currentWeatherContainer}>
-              <Text style={styles.cityText}>{cityName}</Text>
-              <Text style={styles.temperatureText}>
-                  {currentWeather!.temp}°C
-              </Text>
-              <Text style={styles.conditionText}>{currentWeather!.description}</Text>
-              <Image
-                  source={weatherIcons[currentWeather!.icon]}
-                  style={styles.weatherIcon}
-              />
+                <Text style={styles.cityText}>{cityName}</Text>
+                <Text style={styles.temperatureText}>
+                    {currentWeather!.temp}°C
+                </Text>
+                <Text style={styles.conditionText}>{currentWeather!.description}</Text>
+                <Image
+                    source={weatherIcons[currentWeather!.icon]}
+                    style={styles.weatherIcon}
+                />
+                <Text style={styles.sectionTitle}>Forecast</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    {hourlyForecast && hourlyForecast.length > 0 ? (
+                    hourlyForecast.map((hour, index) => {
+                        return (
+                        <View key={index} style={styles.hourlyItem}>
+                            <Text style={styles.hourlyTime}>{format(parse(hour.dt_txt, 'yyyy-MM-dd HH:mm:ss', new Date()), 'EEEE HH:mm')}</Text>
+                            <Image
+                            source={weatherIcons[hour.weather[0].icon] || weatherIcons['01d']}
+                            style={styles.hourlyIcon}
+                            />
+                            <Text style={styles.hourlyTemperature}>
+                            {Math.round(hour.main.temp)}°C
+                            </Text>
+                        </View>
+                        );
+                    })
+                    ) : (
+                    <Text>No forecast data available.</Text>
+                    )}
+                </ScrollView>
               </View>
+              
             )}
             
         </ScrollView>
