@@ -10,6 +10,7 @@ import { getForecast, getForecastFromCoord } from '@/services/weatherForecast';
 import { getCurrentWeather, getCurrentWeatherFromCoord } from '@/services/weatherNow';
 import { useLocalSearchParams } from 'expo-router';
 import { format, parse } from 'date-fns';
+import ForecastList from '@/components/ForecastList';
 
 export default function CitySceen() {
     
@@ -69,130 +70,117 @@ export default function CitySceen() {
         colors={currentWeather?.icon.includes("d") ? ['#4c669f', '#3b5998', '#192f6a'] : ['#907bb4', '#0f056b', '#0d0217']}
         style={styles.container}
         >
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-            {currentWeather == null || location == null ? (
-              <>
-                <ActivityIndicator 
-                  size="large" 
-                  color="#FFFFFF" 
-                  style={{ marginBottom: 20 }}
-                />
-                <Text style={styles.loadingText}>Chargement en cours...</Text>
-              </>      
-            ):(
-              <View style={styles.currentWeatherContainer}>
-                <Text style={styles.cityText}>{cityName==undefined?cityName:currentWeather.city}</Text>
-                <Text style={styles.temperatureText}>
-                    {currentWeather!.temp}°C
-                </Text>
-                <Text style={styles.conditionText}>{currentWeather!.description}</Text>
-                <Image
-                    source={weatherIcons[currentWeather!.icon]}
-                    style={styles.weatherIcon}
-                />
-                <Text style={styles.sectionTitle}>Forecast</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    {hourlyForecast && hourlyForecast.length > 0 ? (
-                    hourlyForecast.map((hour, index) => {
-                        return (
-                        <View key={index} style={styles.hourlyItem}>
-                            <Text style={styles.hourlyTime}>{format(parse(hour.dt_txt, 'yyyy-MM-dd HH:mm:ss', new Date()), 'EEEE HH:mm')}</Text>
-                            <Image
-                            source={weatherIcons[hour.weather[0].icon] || weatherIcons['01d']}
-                            style={styles.hourlyIcon}
-                            />
-                            <Text style={styles.hourlyTemperature}>
-                            {Math.round(hour.main.temp)}°C
-                            </Text>
-                        </View>
-                        );
-                    })
-                    ) : (
-                    <Text>No forecast data available.</Text>
-                    )}
-                </ScrollView>
-              </View>
-              
-            )}
-            
-        </ScrollView>
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                {currentWeather == null || location == null ? (
+                <>
+                    <ActivityIndicator 
+                    size="large" 
+                    color="#FFFFFF" 
+                    style={{ marginBottom: 20 }}
+                    />
+                    <Text style={styles.loadingText}>Chargement en cours...</Text>
+                </>      
+                ):(
+                <View style={styles.currentWeatherContainer}>
+                    <Text style={styles.cityText}>{cityName==undefined?cityName:currentWeather.city}</Text>
+                    <Text style={styles.temperatureText}>
+                        {currentWeather!.temp}°C
+                    </Text>
+                    <Text style={styles.conditionText}>{currentWeather!.description}</Text>
+                    <Image
+                        source={weatherIcons[currentWeather!.icon]}
+                        style={styles.weatherIcon}
+                    />
+                    <Text style={styles.sectionTitle}>Forecast</Text>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                        {hourlyForecast && hourlyForecast.length > 0 ? (
+                        <ForecastList forecastData={hourlyForecast!} />
+                        ) : (
+                        <Text>No forecast data available.</Text>
+                        )}
+                    </ScrollView>
+                </View>
+                
+                )}
+                
+            </ScrollView>
         </LinearGradient>
     );
 }
 
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    padding: 20,
-  },
-  currentWeatherContainer: {
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  cityText: {
-    fontSize: 32,
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  temperatureText: {
-    fontSize: 48,
-    color: '#fff',
-    fontWeight: 'bold',
-    marginVertical: 10,
-  },
-  conditionText: {
-    fontSize: 20,
-    color: '#fff',
-  },
-  weatherIcon: {
-    fontSize: 60,
-    marginTop: 10,
-    height: 300,
-    width: 300,
-  },
-  hourlyForecastContainer: {
-    marginTop: 20,
-    color: 'red',
-  },
-  sectionTitle: {
-    fontSize: 24,
-    color: '#fff',
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  hourlyItem: {
-    alignItems: 'center',
-    marginRight: 20,
-  },
-  hourlyTime: {
-    fontSize: 16,
-    color: '#fff',
-  },
-  hourlyIcon: {
-    fontSize: 30,
-    marginVertical: 5,
-    height: 100,
-    width: 100,
-    maxWidth: 100,
-    maxHeight: 100,
-  },
-  hourlyTemperature: {
-    fontSize: 18,
-    color: '#fff',
-  },
-  loadingText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    marginTop: 10,
-  },
-  errorText: {
-    color: '#FF0000',
-    fontSize: 16,
-    textAlign: 'center',
-    padding: 20,
-  },
+    container: {
+        flex: 1,
+    },
+    scrollContainer: {
+        flexGrow: 1,
+        padding: 20,
+    },
+    currentWeatherContainer: {
+        alignItems: 'center',
+        marginBottom: 30,
+    },
+    cityText: {
+        fontSize: 32,
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+    temperatureText: {
+        fontSize: 48,
+        color: '#fff',
+        fontWeight: 'bold',
+        marginVertical: 10,
+    },
+    conditionText: {
+        fontSize: 20,
+        color: '#fff',
+    },
+    weatherIcon: {
+        fontSize: 60,
+        marginTop: 10,
+        height: 300,
+        width: 300,
+    },
+    hourlyForecastContainer: {
+        marginTop: 20,
+        color: 'red',
+    },
+    sectionTitle: {
+        fontSize: 24,
+        color: '#fff',
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    hourlyItem: {
+        alignItems: 'center',
+        marginRight: 20,
+    },
+    hourlyTime: {
+        fontSize: 16,
+        color: '#fff',
+    },
+    hourlyIcon: {
+        fontSize: 30,
+        marginVertical: 5,
+        height: 100,
+        width: 100,
+        maxWidth: 100,
+        maxHeight: 100,
+    },
+    hourlyTemperature: {
+        fontSize: 18,
+        color: '#fff',
+    },
+    loadingText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        marginTop: 10,
+    },
+    errorText: {
+        color: '#FF0000',
+        fontSize: 16,
+        textAlign: 'center',
+        padding: 20,
+    },
 });
