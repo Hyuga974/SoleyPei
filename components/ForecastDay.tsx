@@ -9,6 +9,14 @@ interface ForecastDayProps {
 }
 
 const ForecastDay: React.FC<ForecastDayProps> = ({ data }) => {
+  let temp : Number
+  if (data.main.temp >  200){
+    console.log("Temp:", data.main.temp)
+    temp = parseFloat((data.main.temp - 273.15).toFixed(1))
+    console.log("Temp:", temp)
+  }else{
+    temp = parseFloat((data.main.temp).toFixed(1))
+  }
   return (
     <View style={styles.hourlyItem}>
       <Text style={styles.hourlyTime}>
@@ -19,7 +27,7 @@ const ForecastDay: React.FC<ForecastDayProps> = ({ data }) => {
         style={styles.hourlyIcon}
       />
       <Text style={styles.hourlyTemperature}>
-        {Math.round(data.main.temp)}°C
+        {temp.toString()}°C
       </Text>
     </View>
   );

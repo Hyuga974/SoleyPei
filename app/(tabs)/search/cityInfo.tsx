@@ -51,7 +51,7 @@ export default function CitySceen() {
                 console.log("In cityInfo -> Weather Data:", weatherData);
                 setCurrentWeather({
                     city: weatherData.name,
-                    temp: parseFloat((weatherData.main.temp).toFixed(2)),
+                    temp: parseFloat((weatherData.main.temp).toFixed(1)),
                     humidity: weatherData.main.humidity,
                     description: weatherData.weather[0].description,
                     icon: weatherData.weather[0].icon,
