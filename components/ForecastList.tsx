@@ -15,7 +15,7 @@ const ForecastList: React.FC<ForecastListProps> = ({ forecastData }) => {
         {forecastData && forecastData.length > 0 ? (
           forecastData.map((hour, index) => <ForecastDay key={index} data={hour} />)
         ) : (
-          <Text>No forecast data available.</Text>
+          <Text style={{color:"white"}}>No forecast data available.</Text>
         )}
       </ScrollView>
     </View>

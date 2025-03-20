@@ -5,7 +5,7 @@ import { weatherIcons } from '@/constants/icons';
 import { ForecastData } from '@/models/weatherData';
 
 interface ForecastDayProps {
-  data: ForecastData; // Replace 'any' with the actual forecast type if available
+  data: ForecastData;
 }
 
 const ForecastDay: React.FC<ForecastDayProps> = ({ data }) => {

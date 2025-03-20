@@ -20,6 +20,7 @@ export async function getForecast(city: string): Promise<ForecastData[] | null> 
         //filter HEre
         console.log("Filtered Forecast Data in progress ...", );
         const filteredData = filterForecast(data);
+        console.log("Nb of filtered data: ", filteredData.length, " Nb before : ", data.list.length);
         return filteredData;
     } catch (error) {
         console.error("Error fetching forecast weather data:", error);
@@ -54,7 +55,11 @@ export async function getForecastFromCoord(coordinates: Coord): Promise<Forecast
 export function filterForecast(forecast : AllForecastData): ForecastData[] {
     // function to filter the forecast data
     const date = new Date();
-    const currentHour = Math.floor(date.getHours()/3)+1*3;
+    let currentHour : Number;
+    if(1 === date.getHours()) {
+        currentHour = Math.floor(date.getHours()+1/3)*3;
+    }
+    currentHour = Math.floor(date.getHours()/3)*3;
     const formatHour = String(currentHour).padStart(2, '0')+":00";
         
     const filteredForecast = forecast.list.filter((data) => {

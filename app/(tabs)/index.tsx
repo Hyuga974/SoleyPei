@@ -43,7 +43,9 @@ export default function HomeScreen() {
                     });
 
                     const forecastData = await getForecast(cityName);
-                    setHourlyForecast(forecastData || []);
+                    if (forecastData) {
+                        setHourlyForecast(forecastData || []);
+                    }
                 }
             };
         }
@@ -85,14 +87,16 @@ export default function HomeScreen() {
                         source={weatherIcons[currentWeather.icon]}
                         style={styles.weatherIcon}
                         />
+                        
                     </View>
                     <ForecastList forecastData={hourlyForecast!} />
+                    
                 </ScrollView>
             ):(
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color="#fff" />
                     <Text style={styles.loadingText}>Loading weather data...</Text>
-                </View>  
+                </View>
             )}
         </LinearGradient>
     );
