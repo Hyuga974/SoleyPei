@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, Image } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Image, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { getCurrentWeather } from '../../services/weatherNow';
 import { getForecast } from '@/services/weatherForecast';
@@ -15,7 +15,7 @@ const defaultCurrentWeather = {
     temp: 25,
     humidity: 50,
     description: 'Sunny',
-    icon: '☀️',
+    icon: 'null',
 };
 
 export default function HomeScreen() {
@@ -71,23 +71,29 @@ export default function HomeScreen() {
 
     return (
         <LinearGradient
-        colors={currentWeather?.icon.includes("d") ? ['#4c669f', '#3b5998', '#192f6a'] : ['#907bb4', '#0f056b', '#0d0217']}
+        colors={currentWeather?.icon.includes("n") ? ['#907bb4', '#0f056b', '#0d0217'] : ['#4c669f', '#3b5998', '#192f6a']}
         style={styles.container}
         >
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
-                {currentWeather && (
-                <View style={styles.currentWeatherContainer}>
-                    <Text style={styles.cityText}>{currentWeather.city}</Text>
-                    <Text style={styles.temperatureText}>{currentWeather.temp}°C</Text>
-                    <Text style={styles.conditionText}>{currentWeather.description}</Text>
-                    <Image
-                    source={weatherIcons[currentWeather.icon]}
-                    style={styles.weatherIcon}
-                    />
-                </View>
-                )}
-                <ForecastList forecastData={hourlyForecast!} />
-            </ScrollView>
+            {currentWeather && currentWeather?.icon != 'null' ? (
+                
+                <ScrollView contentContainerStyle={styles.scrollContainer}>
+                    <View style={styles.currentWeatherContainer}>
+                        <Text style={styles.cityText}>{currentWeather.city}</Text>
+                        <Text style={styles.temperatureText}>{currentWeather.temp}°C</Text>
+                        <Text style={styles.conditionText}>{currentWeather.description}</Text>
+                        <Image
+                        source={weatherIcons[currentWeather.icon]}
+                        style={styles.weatherIcon}
+                        />
+                    </View>
+                    <ForecastList forecastData={hourlyForecast!} />
+                </ScrollView>
+            ):(
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#fff" />
+                    <Text style={styles.loadingText}>Loading weather data...</Text>
+                </View>  
+            )}
         </LinearGradient>
     );
 }
@@ -123,6 +129,17 @@ const styles = StyleSheet.create({
     weatherIcon: {
         height: 300,
         width: 300,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 16,
+        color: '#fff',
     },
 });
 
