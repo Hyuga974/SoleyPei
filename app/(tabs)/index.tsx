@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { getCurrentWeather } from '../../../services/weatherNow';
+import { getCurrentWeather } from '../../services/weatherNow';
 import { getForecast } from '@/services/weatherForecast';
 import { getCity } from '@/services/location';
 import { weatherIcons } from '@/constants/icons';
