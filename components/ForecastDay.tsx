@@ -19,7 +19,7 @@ const ForecastDay: React.FC<ForecastDayProps> = ({ data }) => {
         style={styles.hourlyIcon}
       />
       <Text style={styles.hourlyTemperature}>
-        {Math.round(data.main.temp - 273.15)}°C
+        {Math.round(data.main.temp)}°C
       </Text>
     </View>
   );

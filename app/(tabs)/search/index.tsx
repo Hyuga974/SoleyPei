@@ -1,40 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Animated, Easing, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Feather } from '@expo/vector-icons';
 import { getCities } from '@/services/location';
 import CityCardList from '@/components/CityCardList';
 import { LocationWithWeather } from '@/models/coodrinate';
 import { getCurrentWeather } from '@/services/weatherNow';
+import SearchBar from '@/components/SearchBar';  // Importing the correct SearchBar
 
 export default function Search() {
     const [searchQuery, setSearchQuery] = useState('');
-    const [isFocused, setIsFocused] = useState(false);
-    const animatedWidth = new Animated.Value(200);
-
     const [cities, setCities] = useState<LocationWithWeather[]>([]);
-
-    // Handle focus animation
-    const handleFocus = () => {
-        setIsFocused(true);
-        Animated.timing(animatedWidth, {
-            toValue: 300,
-            duration: 300,
-            easing: Easing.ease,
-            useNativeDriver: false,
-        }).start();
-    };
-
-    // Handle blur animation
-    const handleBlur = () => {
-        setIsFocused(false);
-        Animated.timing(animatedWidth, {
-            toValue: 200,
-            duration: 300,
-            easing: Easing.ease,
-            useNativeDriver: false,
-        }).start();
-    };
 
     const search = async () => {
         console.log('You searched something ....');
@@ -79,30 +54,19 @@ export default function Search() {
         >
             <SafeAreaView style={styles.safeArea}>
                 <View style={styles.searchContainer}>
-                    <Animated.View style={[styles.searchBarContainer, { width: animatedWidth }]}>
-                        <LinearGradient
-                            colors={isFocused ? ['#907bb4', '#0f056b', '#0d0217'] : ['#0d0217', '#0f056b', '#907bb4']}
-                            style={styles.gradientBackground}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 0 }}
-                        >
-                            <Feather name="search" size={20} color="#fff" style={styles.icon} />
-                            <TextInput
-                                style={[styles.searchBar, { color: '#fff' }]}
-                                placeholder="Search..."
-                                placeholderTextColor={isFocused ? '#ddd' : '#999'}
-                                value={searchQuery}
-                                onChangeText={setSearchQuery}
-                                onFocus={handleFocus}
-                                onBlur={handleBlur}
-                                returnKeyType="search"
-                                onSubmitEditing={search}
-                            />
-                        </LinearGradient>
-                    </Animated.View>
+                    <SearchBar 
+                        searchQuery={searchQuery} 
+                        setSearchQuery={setSearchQuery} 
+                        onSubmit={search} 
+                    />
                 </View>
+
                 <View style={styles.resultsContainer}>
-                    {cities.length > 0 ? <CityCardList cities={cities} /> : <Text style={styles.noDataText}>No cities data.</Text>}
+                    {cities.length > 0 ? (
+                        <CityCardList cities={cities} />
+                    ) : (
+                        <Text style={styles.noDataText}>No cities data.</Text>
+                    )}
                 </View>
             </SafeAreaView>
         </LinearGradient>
@@ -118,24 +82,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 20, // Adds space between search bar and results
     },
-    searchBarContainer: {
-        height: 50,
-        borderRadius: 25,
-        overflow: 'hidden',
-    },
-    gradientBackground: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 16,
-    },
-    icon: {
-        marginRight: 10,
-    },
-    searchBar: {
-        flex: 1,
-        fontSize: 16,
-    },
     resultsContainer: {
         flex: 1,
         paddingHorizontal: 16,
@@ -145,5 +91,11 @@ const styles = StyleSheet.create({
         marginTop: 20,
         color: '#fff',
     },
+    
+    gradientBackground: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 16,
+    },
 });
-
