@@ -81,7 +81,7 @@ export default function CitySceen() {
               </>      
             ):(
               <View style={styles.currentWeatherContainer}>
-                <Text style={styles.cityText}>{cityName}</Text>
+                <Text style={styles.cityText}>{cityName==undefined?cityName:currentWeather.city}</Text>
                 <Text style={styles.temperatureText}>
                     {currentWeather!.temp}°C
                 </Text>

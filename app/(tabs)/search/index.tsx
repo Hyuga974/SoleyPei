@@ -75,14 +75,14 @@ export default function Search() {
         <View style={styles.container}>
             <Animated.View style={[styles.searchBarContainer, { width: animatedWidth }]}>
                 <LinearGradient
-                    colors={isFocused ? ['#907bb4', '#0d0217'] : ['#f0f0f0', '#e0e0e0']}
+                    colors={isFocused ?  ['#907bb4', '#0f056b', '#0d0217'] :['#192f6a','#3b5998','#4c669f']}
                     style={styles.gradientBackground}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                 >
-                    <Feather name="search" size={20} color={isFocused ? '#fff' : '#999'} style={styles.icon} />
+                    <Feather name="search" size={20} color={isFocused ? '#fff' : '#fff'} style={styles.icon} />
                     <TextInput
-                        style={[styles.searchBar, { color: isFocused ? '#fff' : '#333' }]}
+                        style={[styles.searchBar, { color: isFocused ? '#fff' : '#fff' }]}
                         placeholder="Search..."
                         placeholderTextColor={isFocused ? '#ddd' : '#999'}
                         value={searchQuery}
