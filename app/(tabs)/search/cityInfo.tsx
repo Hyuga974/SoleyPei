@@ -91,7 +91,6 @@ export default function CitySceen() {
                         source={weatherIcons[currentWeather!.icon]}
                         style={styles.weatherIcon}
                     />
-                    <Text style={styles.sectionTitle}>Forecast</Text>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                         {hourlyForecast && hourlyForecast.length > 0 ? (
                         <ForecastList forecastData={hourlyForecast!} />

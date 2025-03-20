@@ -95,6 +95,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        paddingTop: 47,
     },
     scrollContainer: {
         flexGrow: 1,
