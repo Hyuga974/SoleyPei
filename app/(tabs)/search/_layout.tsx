@@ -21,7 +21,7 @@ export default function SearchLayout() {
 
       {/* Écran de détails */}
       <Stack.Screen
-        name="cityinfo"
+        name="cityInfo"
         options={{
           title: 'Détails de la ville',
           presentation: 'modal',

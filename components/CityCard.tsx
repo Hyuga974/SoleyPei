@@ -1,40 +1,57 @@
 import React from 'react';
-import { View, Text, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons'; // For icons
 import { LocationInfo, LocationWithWeather } from '@/models/coodrinate'; // Import the LocationInfo type
 import { Weather } from '@/models/weatherData';
+import { router } from 'expo-router';
 
 interface CityCardProps {
     city : LocationWithWeather;
 }
 
-const CityCard: React.FC<CityCardProps> = ({ city }) => (
-    <View style={styles.cardContainer}>
-        <LinearGradient
-            colors={city.currentWeather?.icon.includes("d") ? ['#4c669f', '#3b5998', '#192f6a'] : ['#907bb4', '#0f056b', '#0d0217']} // Overlay gradient
-            style={styles.gradientOverlay}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-        >
-            <View style={styles.cardContent}>
-                <Text style={styles.cityName}>{city.name}</Text>
-                <View style={styles.locationContainer}>
-                    <Feather name="map-pin" size={16} color="#fff" />
-                    <Text style={styles.locationText}>
-                        {city.state}, {city.country}
-                    </Text>
-                </View>
-                <View style={styles.coordinatesContainer}>
-                    <Feather name="map" size={16} color="#fff" />
-                    <Text style={styles.coordinatesText}>
-                        Lat: {city.lat.toFixed(4)}, Lon: {city.lon.toFixed(4)}
-                    </Text>
-                </View>
+const CityCard: React.FC<CityCardProps> = ({ city }) => {
+    const handlePress = () => {
+        console.log("City Card Pressed:", city.name);
+        router.push({
+          pathname: '/search/cityInfo',
+          params: {
+            name: city.name,
+            lat: city.lat,
+            lon: city.lon
+          }
+        });
+      };
+    return(
+        <Pressable onPress={handlePress} style={styles.cardContainer}>
+            <View style={styles.cardContainer}>
+                <LinearGradient
+                    colors={city.currentWeather?.icon.includes("d") ? ['#4c669f', '#3b5998', '#192f6a'] : ['#907bb4', '#0f056b', '#0d0217']} // Overlay gradient
+                    style={styles.gradientOverlay}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                >
+                    <View style={styles.cardContent}>
+                        <Text style={styles.cityName}>{city.name}</Text>
+                        <View style={styles.locationContainer}>
+                            <Feather name="map-pin" size={16} color="#fff" />
+                            <Text style={styles.locationText}>
+                                {city.state}, {city.country}
+                            </Text>
+                        </View>
+                        <View style={styles.coordinatesContainer}>
+                            <Feather name="map" size={16} color="#fff" />
+                            <Text style={styles.coordinatesText}>
+                                Lat: {city.lat.toFixed(4)}, Lon: {city.lon.toFixed(4)}
+                            </Text>
+                        </View>
+                    </View>
+                </LinearGradient>
             </View>
-        </LinearGradient>
-    </View>
-);
+        </Pressable>
+    )
+    
+}
 
 const styles = StyleSheet.create({
     cardContainer: {

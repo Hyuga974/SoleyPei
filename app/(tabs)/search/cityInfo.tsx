@@ -1,4 +1,4 @@
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useEffect, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ForecastData, Weather } from '@/models/weatherData';
@@ -8,65 +8,59 @@ import { Coord, LocationData } from '@/models/coodrinate';
 import { getCity } from '@/services/location';
 import { getForecast } from '@/services/weatherForecast';
 import { getCurrentWeather } from '@/services/weatherNow';
+import { useLocalSearchParams } from 'expo-router';
 
 export default function CitySceen() {
+    
+    const params = useLocalSearchParams();
+    console.log("Params:", params);
+    
     const [currentWeather, setCurrentWeather] = useState<Weather | null>(null);
     const [hourlyForecast, setHourlyForecast] = useState<ForecastData[] | null>(null);
-    const [location, setLocation] = useState<Coord | null>(null);
+    const [location, setLocation] = useState<Coord | null>(params.lat && params.lon ? { latitude: parseFloat(params.lat as string), longitude: parseFloat(params.lon as string) } : null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+    const [cityName, setCityName] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchWeather = async () => {
-        const city: LocationData | null = await getCity(location!);
-        if (city) {
-            const cityData = JSON.parse(JSON.stringify(city));
-            const cityName = cityData[0].local_names.fr + ", " + cityData[0].country;
-            console.log("City Name:", cityName);
-
-            const weatherData = await getCurrentWeather(cityName);
-            if (weatherData) {
-            setCurrentWeather({
-                city: weatherData.name,
-                temp: parseFloat((weatherData.main.temp - 273.15).toFixed(2)),
-                humidity: weatherData.main.humidity,
-                description: weatherData.weather[0].description,
-                icon: weatherData.weather[0].icon,
-            });
+            const city: LocationData | null = await getCity(location!);
+            console.log("In cityInfo -> City Data --------->", city);
+            if (city) {
+                console.log("In cityInfo -> City Data:", city);
+                const cityData = JSON.parse(JSON.stringify(city));
+                setCityName(cityData[0].local_names.fr + ", " + cityData[0].country);
+                console.log("City Name:", cityName);
+            } else {
+                console.log("Failed to fetch city data.");
             }
-
-            const hourlyForecastData = await getForecast(cityName);
-
-            hourlyForecastData ? setHourlyForecast(hourlyForecastData) : setHourlyForecast([]);
-        } else {
-            console.log("Failed to fetch city data.");
-        }
         };
 
         fetchWeather();
-    }, [location]);
+        console.log("HEre")
+    }, []);
 
     useEffect(() => {
-        async function getCurrentLocation() {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-            setErrorMsg('Permission to access location was denied');
-            return;
+        const fetchWeather = async () => {
+            const weatherData = await getCurrentWeather(cityName!);
+            if (weatherData) {
+                
+                console.log("In cityInfo -> Weather Data:", weatherData);
+                setCurrentWeather({
+                    city: weatherData.name,
+                    temp: parseFloat((weatherData.main.temp - 273.15).toFixed(2)),
+                    humidity: weatherData.main.humidity,
+                    description: weatherData.weather[0].description,
+                    icon: weatherData.weather[0].icon,
+                }); 
+            }
+            const hourlyForecastData = await getForecast(cityName!);
+            hourlyForecastData ? setHourlyForecast(hourlyForecastData) : setHourlyForecast([]);
         }
+        fetchWeather();
+    }, [cityName]);
 
-        let locationData = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-        console.log("Location before edit:", locationData);
 
-        let newLocation = {
-            latitude: locationData.coords.latitude,
-            longitude: locationData.coords.longitude,
-        };
-        console.log("Location after edit:", newLocation);
-
-        setLocation(newLocation);
-        }
-
-        getCurrentLocation();
-    }, []);
 
     return (
         <LinearGradient
@@ -74,18 +68,29 @@ export default function CitySceen() {
         style={styles.container}
         >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-            {/* Current Weather Section */}
-            <View style={styles.currentWeatherContainer}>
-            <Text style={styles.cityText}>{currentWeather!.city}</Text>
-            <Text style={styles.temperatureText}>
-                {currentWeather!.temp}°C
-            </Text>
-            <Text style={styles.conditionText}>{currentWeather!.description}</Text>
-            <Image
-                source={weatherIcons[currentWeather!.icon]}
-                style={styles.weatherIcon}
-            />
-            </View>
+            {currentWeather == null || location == null ? (
+              <>
+                <ActivityIndicator 
+                  size="large" 
+                  color="#FFFFFF" 
+                  style={{ marginBottom: 20 }}
+                />
+                <Text style={styles.loadingText}>Chargement en cours...</Text>
+              </>      
+            ):(
+              <View style={styles.currentWeatherContainer}>
+              <Text style={styles.cityText}>{cityName}</Text>
+              <Text style={styles.temperatureText}>
+                  {currentWeather!.temp}°C
+              </Text>
+              <Text style={styles.conditionText}>{currentWeather!.description}</Text>
+              <Image
+                  source={weatherIcons[currentWeather!.icon]}
+                  style={styles.weatherIcon}
+              />
+              </View>
+            )}
+            
         </ScrollView>
         </LinearGradient>
     );
@@ -154,5 +159,16 @@ const styles = StyleSheet.create({
   hourlyTemperature: {
     fontSize: 18,
     color: '#fff',
+  },
+  loadingText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    marginTop: 10,
+  },
+  errorText: {
+    color: '#FF0000',
+    fontSize: 16,
+    textAlign: 'center',
+    padding: 20,
   },
 });

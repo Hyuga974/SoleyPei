@@ -17,9 +17,7 @@ export async function getCity(location : Coord): Promise<LocationData | null> {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      console.log("Waiting for JSON response...");
       const location : LocationData  = await response.json();
-      console.log("Request succeeded with JSON response")
       return location;
     } catch (error) {
       console.error("Error fetching city data:", error);
