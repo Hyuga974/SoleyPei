@@ -14,7 +14,7 @@ export default function SearchLayout() {
       <Stack.Screen
         name="index"
         options={{
-          title: 'Recherche de villes',
+          title: 'Search a city',
           headerShown: false,
         }}
       />
@@ -23,7 +23,7 @@ export default function SearchLayout() {
       <Stack.Screen
         name="cityInfo"
         options={{
-          title: 'Détails de la ville',
+          title: 'Details',
           presentation: 'modal',
         }}
       />
