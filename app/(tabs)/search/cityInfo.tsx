@@ -7,7 +7,7 @@ import * as Location from 'expo-location';
 import { Coord, LocationData } from '@/models/coodrinate';
 import { getCity } from '@/services/location';
 import { getForecast } from '@/services/weatherForecast';
-import { getCurrentWeather } from '@/services/weatherNow';
+import { getCurrentWeather, getCurrentWeatherFromCoord } from '@/services/weatherNow';
 import { useLocalSearchParams } from 'expo-router';
 
 export default function CitySceen() {
@@ -42,13 +42,14 @@ export default function CitySceen() {
 
     useEffect(() => {
         const fetchWeather = async () => {
-            const weatherData = await getCurrentWeather(cityName!);
+            const coodrinate: Coord = { latitude: location?.latitude!, longitude: location?.longitude! };
+            const weatherData = await getCurrentWeatherFromCoord(coodrinate);
             if (weatherData) {
                 
                 console.log("In cityInfo -> Weather Data:", weatherData);
                 setCurrentWeather({
                     city: weatherData.name,
-                    temp: parseFloat((weatherData.main.temp - 273.15).toFixed(2)),
+                    temp: parseFloat((weatherData.main.temp).toFixed(2)),
                     humidity: weatherData.main.humidity,
                     description: weatherData.weather[0].description,
                     icon: weatherData.weather[0].icon,
