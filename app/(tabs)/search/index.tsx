@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Animated, Easing } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Animated, Easing, SafeAreaView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { getCities } from '@/services/location';
@@ -62,53 +62,61 @@ export default function Search() {
                 );
                 setCities(citiesWithWeather);
             } else {
-                // If no results, clear the cities state
                 setCities([]);
             }
         } catch (error) {
             console.error('Error fetching cities or weather data:', error);
-            setCities([]); // Clear the cities state in case of an error
+            setCities([]);
         }
     };
 
     return (
-        <View style={styles.container}>
-            <Animated.View style={[styles.searchBarContainer, { width: animatedWidth }]}>
-                <LinearGradient
-                    colors={isFocused ?  ['#907bb4', '#0f056b', '#0d0217'] :['#192f6a','#3b5998','#4c669f']}
-                    style={styles.gradientBackground}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                >
-                    <Feather name="search" size={20} color={isFocused ? '#fff' : '#fff'} style={styles.icon} />
-                    <TextInput
-                        style={[styles.searchBar, { color: isFocused ? '#fff' : '#fff' }]}
-                        placeholder="Search..."
-                        placeholderTextColor={isFocused ? '#ddd' : '#999'}
-                        value={searchQuery}
-                        onChangeText={setSearchQuery}
-                        onFocus={handleFocus}
-                        onBlur={handleBlur}
-                        returnKeyType="search"
-                        onSubmitEditing={search}
-                    />
-                </LinearGradient>
-            </Animated.View>
-            {cities.length > 0 ? (
-                <View>
-                    <CityCardList cities={cities} />
+        <LinearGradient
+            colors={['#192f6a', '#3b5998', '#4c669f']}
+            style={styles.gradientBackground}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+        >
+            <SafeAreaView style={styles.safeArea}>
+                <View style={styles.searchContainer}>
+                    <Animated.View style={[styles.searchBarContainer, { width: animatedWidth }]}>
+                        <LinearGradient
+                            colors={isFocused ? ['#907bb4', '#0f056b', '#0d0217'] : ['#0d0217', '#0f056b', '#907bb4']}
+                            style={styles.gradientBackground}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
+                        >
+                            <Feather name="search" size={20} color="#fff" style={styles.icon} />
+                            <TextInput
+                                style={[styles.searchBar, { color: '#fff' }]}
+                                placeholder="Search..."
+                                placeholderTextColor={isFocused ? '#ddd' : '#999'}
+                                value={searchQuery}
+                                onChangeText={setSearchQuery}
+                                onFocus={handleFocus}
+                                onBlur={handleBlur}
+                                returnKeyType="search"
+                                onSubmitEditing={search}
+                            />
+                        </LinearGradient>
+                    </Animated.View>
                 </View>
-            ) : (
-                <Text>No cities data found.</Text>
-            )}
-        </View>
+                <View style={styles.resultsContainer}>
+                    {cities.length > 0 ? <CityCardList cities={cities} /> : <Text style={styles.noDataText}>No cities data.</Text>}
+                </View>
+            </SafeAreaView>
+        </LinearGradient>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+    safeArea: {
+        flex: 1,
+        paddingTop: 50, // Ensures content is below the status bar
+    },
+    searchContainer: {
         alignItems: 'center',
-        marginTop: 20,
+        marginBottom: 20, // Adds space between search bar and results
     },
     searchBarContainer: {
         height: 50,
@@ -128,4 +136,14 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 16,
     },
+    resultsContainer: {
+        flex: 1,
+        paddingHorizontal: 16,
+    },
+    noDataText: {
+        textAlign: 'center',
+        marginTop: 20,
+        color: '#fff',
+    },
 });
+
